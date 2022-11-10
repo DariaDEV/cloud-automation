@@ -1,25 +1,25 @@
 ---
-- name: Ensure dependencies are installed.
+- name: Ensure dependencies are installed
   apt:
     name:
       - apt-transport-https
       - ca-certificates
     state: present
 
-- name: Add Kubernetes apt key.
+- name: Add Kubernetes apt key
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
     state: present
   register: add_repository_key
   ignore_errors: false
 
-- name: Add Kubernetes repository.
+- name: Add Kubernetes repository
   apt_repository:
     repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
     state: present
     update_cache: true
 
-- name: Update and upgrade OS
+- name: Update OS's repos
   apt:
     update_cache: yes
 
@@ -42,3 +42,24 @@
 ### Next step is writing local DNS alias in /etc/hosts file.
 ### Since we cannot save output from Ansible in variable in simple way,
 ### this step will be accomplished via bash script
+# TODO: implement check if entry does exist in /etc/hosts already
+
+- name: Copy script which adds DNS alias to /etc/hosts
+  copy:
+    src: add_dns_alias.sh
+    dest: ~/add_dns_alias.sh
+    mode: 0775
+
+- name: Run script which adds DNS alias to /etc/hosts
+  shell: ~/add_dns_alias.sh
+
+- name: Remove script which adds DNS alias to /etc/hosts
+  file:
+    path: ~/add_dns_alias.sh
+    state: absent
+
+- name: Configure Calico from template
+  template:
+    src: calico.yaml.j2
+    dest: ~
+    mode: 0775
