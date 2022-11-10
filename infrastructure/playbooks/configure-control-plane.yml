@@ -8,3 +8,5 @@
       become: yes
     - role: install_kubernetes
       become: yes
+    - role: configure_kubeadm
+    - role: copy_kubeconfig
