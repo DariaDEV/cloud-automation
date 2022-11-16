@@ -3,6 +3,7 @@
 # Since we cannot save output from Ansible in variable in simple way,
 # this step will be accomplished via bash script
 # TODO: implement check if entry does exist in /etc/hosts already
+# TODO : this role will not work on workers - find out the way to pass IP from control plane to workers
 - name: Copy script which adds DNS alias to /etc/hosts
   copy:
     src: add_dns_alias.sh
